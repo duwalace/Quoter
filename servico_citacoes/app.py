@@ -24,7 +24,8 @@ citacoes_db = [
     Citacao(1, "A persistência é o caminho do êxito.", "Charles Chaplin"),
     Citacao(2, "A imaginação é mais importante que o conhecimento.", "Albert Einstein"),
     Citacao(3, "O único lugar onde o sucesso vem antes do trabalho é no dicionário.", "Vidal Sassoon"),
-    Citacao(4, "Tente ser um arco-íris na nuvem de alguém.", "Maya Angelou")
+    Citacao(4, "Tente ser um arco-íris na nuvem de alguém.", "Maya Angelou"),
+    Citacao(5, "Fale é barato. Mostre-me o código.", "Linus Torvalds")
 ]
 
 # --- Requisito 3: Arquitetura de Microsserviços ---
