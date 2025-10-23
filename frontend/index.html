@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoter - Citação do Dia</title>
+    <style>
+        /* CSS simples para centralizar */
+        body { 
+            font-family: Arial, sans-serif; 
+            display: grid;
+            place-items: center;
+            min-height: 90vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        #citacao {
+            font-size: 1.5em;
+            font-style: italic;
+            color: #333;
+            max-width: 600px;
+            margin: 20px 0;
+        }
+        #autor {
+            font-size: 1.2em;
+            color: #555;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sua Citação do Dia</h1>
+        
+        <p id="citacao">Clique no botão para carregar uma citação...</p>
+        <p id="autor"></p>
+
+        <button id="nova-citacao-btn">Nova Citação</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
