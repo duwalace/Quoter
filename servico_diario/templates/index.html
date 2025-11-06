@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoter - Citação do Dia</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Gerador de Citações</h1>
+        
+        <div class="filtros-container">
+            <div class="filtro-grupo">
+                <label for="filtro-area">Filtrar por Área:</label>
+                <select id="filtro-area">
+                    <option value="todos">Todas as Áreas</option>
+                </select>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtro-autor">Filtrar por Autor:</label>
+                <select id="filtro-autor">
+                    <option value="todos">Todos os Autores</option>
+                </select>
+            </div>
+        </div>
+        
+        <blockquote id="quote-texto">
+            Clique no botão para carregar uma citação...
+            <span id="quote-area"></span>
+        </blockquote>
+        <footer id="quote-autor"></footer>
+        <button id="btn-buscar">Nova Citação</button>
+    </div>
+
+    <script>
+        const btnBuscar = document.getElementById('btn-buscar');
+        const quoteTexto = document.getElementById('quote-texto');
+        const quoteAutor = document.getElementById('quote-autor');
+        const quoteArea = document.getElementById('quote-area');
+        const selectArea = document.getElementById('filtro-area');
+        const selectAutor = document.getElementById('filtro-autor');
+
+        async function buscarCitacao() {
+            btnBuscar.disabled = true;
+            btnBuscar.textContent = 'Carregando...';
+            const autor = selectAutor.value;
+            const area = selectArea.value;
+
+            try {
+                const url = new URL('/citacao-do-dia', window.location.origin);
+                url.searchParams.append('autor', autor);
+                url.searchParams.append('area', area);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.erro) {
+                    quoteTexto.textContent = data.erro;
+                    quoteAutor.textContent = '';
+                    quoteArea.textContent = '';
+                    quoteArea.style.display = 'none';
+                } else {
+                    quoteTexto.textContent = `"${data.texto}"`;
+                    quoteAutor.textContent = `— ${data.autor}`;
+                    quoteArea.textContent = data.area;
+                    quoteArea.style.display = 'inline-block';
+                }
+            } catch (error) {
+                quoteTexto.textContent = 'Não foi possível conectar ao servidor. Tente novamente.';
+                quoteAutor.textContent = '';
+                quoteArea.style.display = 'none';
+            }
+            
+            btnBuscar.disabled = false;
+            btnBuscar.textContent = 'Nova Citação';
+        }
+        
+        async function popularFiltros() {
+            try {
+                const response = await fetch('/filtros');
+                const data = await response.json();
+                
+                data.areas.forEach(area => {
+                    const option = new Option(area, area);
+                    selectArea.add(option);
+                });
+                
+                data.autores.forEach(autor => {
+                    const option = new Option(autor, autor);
+                    selectAutor.add(option);
+                });
+                
+            } catch (error) {
+                console.error("Erro ao carregar filtros:", error);
+            }
+        }
+
+        btnBuscar.addEventListener('click', buscarCitacao);
+        popularFiltros();
+        buscarCitacao();
+    </script>
+
+</body>
+</html>
