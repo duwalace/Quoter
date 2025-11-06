@@ -27,17 +27,18 @@
             </div>
         </div>
         
-        <blockquote id="quote-texto">
-            Clique no botão para carregar uma citação...
+        <blockquote id="quote-container">
+            <span id="quote-texto">Clique no botão para carregar uma citação...</span>
             <span id="quote-area"></span>
         </blockquote>
+        
         <footer id="quote-autor"></footer>
         <button id="btn-buscar">Nova Citação</button>
     </div>
 
     <script>
         const btnBuscar = document.getElementById('btn-buscar');
-        const quoteTexto = document.getElementById('quote-texto');
+        const quoteTexto = document.getElementById('quote-texto'); // Agora pega o <span> correto
         const quoteAutor = document.getElementById('quote-autor');
         const quoteArea = document.getElementById('quote-area');
         const selectArea = document.getElementById('filtro-area');
@@ -58,11 +59,13 @@
                 const data = await response.json();
 
                 if (data.erro) {
-                    quoteTexto.textContent = data.erro;
+                    // Esta linha agora só afeta o span 'quote-texto'
+                    quoteTexto.textContent = data.erro; 
                     quoteAutor.textContent = '';
                     quoteArea.textContent = '';
                     quoteArea.style.display = 'none';
                 } else {
+                    // Esta linha agora só afeta o span 'quote-texto'
                     quoteTexto.textContent = `"${data.texto}"`;
                     quoteAutor.textContent = `— ${data.autor}`;
                     quoteArea.textContent = data.area;
