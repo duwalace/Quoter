@@ -1,49 +1,65 @@
-from flask import Flask, jsonify
-# --- Requisito 4: Bibliotecas Python ---
-import requests  # Para comunicação entre serviços
-import random    # Para seleção da citação
+# <<< MUDANÇA 1: Importar 'render_template'
+from flask import Flask, jsonify, request, render_template
+import requests 
+# 'os' e 'send_from_directory' não são mais necessários para esta rota
 
-# --- Requisito 1: Linguagem Python ---
 app = Flask(__name__)
+# O Flask automaticamente encontra a pasta 'templates'
 
-# URL do microsserviço que armazena os dados
-URL_SERVICO_CITACOES = "http://127.0.0.1:5001/citacoes"
+# URL do outro serviço (o "banco de dados")
+URL_BASE_CITATCOES = "http://127.0.0.1:5001/citacoes"
 
-# --- Requisito 3: Arquitetura de Microsserviços ---
-# Endpoint público para o Projeto Integrador
+# --- Rota 1: Servir o Frontend (o site bonito) ---
+@app.route('/') 
+def index():
+    """ 
+    Serve a página principal 'index.html' a partir da pasta 'templates'.
+    """
+    # <<< MUDANÇA 2: Usar 'render_template'
+    # Isso processa o HTML e resolve o 'url_for'
+    return render_template('index.html')
+
+# --- Rota 2: A API que o site bonito chama ---
 @app.route('/citacao-do-dia', methods=['GET'])
 def get_citacao_do_dia():
+    """ 
+    Consome o serviço de citações e repassa o JSON.
+    (Esta função não muda)
     """
-    Consome o serviço de citações, escolhe uma aleatoriamente
-    e a retorna para o cliente.
-    """
+    
+    autor = request.args.get('autor', 'todos')
+    area = request.args.get('area', 'todos')
+    params = {'autor': autor, 'area': area}
+    
     try:
-        # 1. Comunicação HTTP entre serviços
-        # O servico_diario atua como cliente do servico_citacoes
-        response = requests.get(URL_SERVICO_CITACOES)
-        
-        # Lança um erro caso o servico_citacoes esteja fora ou dê erro
+        response = requests.get(f"{URL_BASE_CITATCOES}/filtrada", params=params)
         response.raise_for_status() 
-        
-        lista_de_citacoes = response.json()
-        
-        if not lista_de_citacoes:
-            return jsonify({"erro": "Nenhuma citação encontrada no serviço de dados"}), 404
-            
-        # 2. Uso da biblioteca 'random' (Requisito 4)
-        citacao_escolhida = random.choice(lista_de_citacoes)
-        
-        # 3. Retorna a resposta final ao cliente
+        citacao_escolhida = response.json()
         return jsonify(citacao_escolhida)
     
     except requests.exceptions.ConnectionError:
-        # Erro comum em microsserviços: um serviço está fora
-        return jsonify({"erro": "O serviço de citações está indisponível"}), 503 # Service Unavailable
-    
+        return jsonify({"erro": "O serviço de citações está indisponível"}), 503 
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            return jsonify({"erro": "Nenhuma citação encontrada com esses filtros."}), 404
+        return jsonify({"erro": f"Serviço de citações retornou erro: {e.response.status_code}"}), 500
     except Exception as e:
-        # Captura outros erros (ex: JSON inválido, etc.)
         return jsonify({"erro": f"Um erro interno ocorreu: {str(e)}"}), 500
 
+# --- Rota 3: API para buscar os filtros ---
+@app.route('/filtros', methods=['GET'])
+def get_filtros_disponiveis():
+    """ 
+    Busca os autores e áreas do serviço de citações.
+    (Esta função não muda)
+    """
+    try:
+        response = requests.get(f"{URL_BASE_CITATCOES}/filtros")
+        response.raise_for_status()
+        return jsonify(response.json())
+    except Exception:
+        return jsonify({"autores": [], "areas": []}), 500
+
+# --- Roda o servidor ---
 if __name__ == '__main__':
-    # Rodando na porta padrão (5000)
     app.run(port=5000, debug=True)
