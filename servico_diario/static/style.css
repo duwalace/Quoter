@@ -21,6 +21,12 @@ body {
     transition: all 0.3s ease;
 }
 h1 { color: #1c1e21; margin-top: 0; margin-bottom: 30px; }
+.logo {
+    max-width: 60%;
+    height: auto;
+    margin: 0 auto 30px auto;
+    display: block;
+}
 
 /* --- CSS PARA OS FILTROS --- */
 .filtros-container {
