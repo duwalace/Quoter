@@ -39,10 +39,18 @@ def driver():
     driver.quit()
 
 def test_fluxo_completo_com_filtro(servers, driver):
-    # 1. Acessa a página
+    # 1. Acessa a página home
     driver.get("http://127.0.0.1:5000/")
     
-    # 2. Espera os filtros carregarem
+    # 2. Navega para a página de citações
+    # Espera o botão CTA aparecer e clica nele
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "cta-button"))
+    )
+    cta_button = driver.find_element(By.CLASS_NAME, "cta-button")
+    cta_button.click()
+    
+    # 3. Espera os filtros carregarem na página de citações
     # Espera a opção "Ciência" aparecer no select (timeout de 20s)
     WebDriverWait(driver, 20).until(
         EC.text_to_be_present_in_element((By.ID, "filtro-area"), "Ciência")

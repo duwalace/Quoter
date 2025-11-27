@@ -9,15 +9,21 @@ app = Flask(__name__)
 # URL do outro serviço (o "banco de dados")
 URL_BASE_CITATCOES = "http://127.0.0.1:5001/citacoes"
 
-# --- Rota 1: Servir o Frontend (o site bonito) ---
+# --- Rota 1: Página Home ---
 @app.route('/') 
-def index():
+def home():
     """ 
-    Serve a página principal 'index.html' a partir da pasta 'templates'.
+    Serve a página inicial (home) com apresentação do Quoter.
     """
-    # <<< MUDANÇA 2: Usar 'render_template'
-    # Isso processa o HTML e resolve o 'url_for'
-    return render_template('index.html')
+    return render_template('home.html')
+
+# --- Rota 2: Página de Citações ---
+@app.route('/citations')
+def citations():
+    """ 
+    Serve a página de citações com filtros e busca.
+    """
+    return render_template('citations.html')
 
 # --- Rota 2: A API que o site bonito chama ---
 @app.route('/citacao-do-dia', methods=['GET'])
@@ -62,4 +68,13 @@ def get_filtros_disponiveis():
 
 # --- Roda o servidor ---
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    print("=" * 50)
+    print("Iniciando servidor Flask na porta 5000...")
+    print("Acesse: http://127.0.0.1:5000/")
+    print("=" * 50)
+    try:
+        app.run(host='127.0.0.1', port=5000, debug=True, use_reloader=False)
+    except Exception as e:
+        print(f"ERRO ao iniciar servidor: {e}")
+        import traceback
+        traceback.print_exc()

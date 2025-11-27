@@ -1,0 +1,19 @@
+# Dependências do Projeto Quoter
+# Instale com: pip install -r requirements.txt
+
+# Framework Web
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Requisições HTTP
+requests==2.31.0
+
+# Testes
+pytest==7.4.3
+pytest-mock==3.12.0
+
+# Testes E2E (Selenium)
+selenium==4.15.2
+
+# Testes de Carga
+locust==2.17.0

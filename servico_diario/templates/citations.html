@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoter - Citações</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="citations-page">
+    <nav class="top-nav">
+        <a href="{{ url_for('home') }}" class="nav-logo">
+            <img src="{{ url_for('static', filename='Quoterlogo.png') }}" alt="Quoter">
+        </a>
+        <a href="{{ url_for('home') }}" class="nav-link">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 10L5 10M5 10L9 6M5 10L9 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Voltar
+        </a>
+    </nav>
+
+    <div class="citations-container">
+        <header class="citations-header">
+            <h1 class="page-title">Citações Inspiradoras</h1>
+            <p class="page-subtitle">Encontre a mensagem perfeita para inspirar seu dia</p>
+        </header>
+        
+        <div class="filters-section">
+            <div class="filters-container">
+                <div class="filter-group">
+                    <label for="filtro-area" class="filter-label">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 1L11.5 6.5L17.5 7.5L13 11.5L14 17.5L9 14.5L4 17.5L5 11.5L0.5 7.5L6.5 6.5L9 1Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Área
+                    </label>
+                    <select id="filtro-area" class="filter-select">
+                        <option value="todos">Todas as Áreas</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filtro-autor" class="filter-label">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 9C11.4853 9 13.5 6.98528 13.5 4.5C13.5 2.01472 11.4853 0 9 0C6.51472 0 4.5 2.01472 4.5 4.5C4.5 6.98528 6.51472 9 9 9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M0 18C0 13.5 4.5 12 9 12C13.5 12 18 13.5 18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Autor
+                    </label>
+                    <select id="filtro-autor" class="filter-select">
+                        <option value="todos">Todos os Autores</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quote-section">
+            <div class="quote-card" id="quote-card">
+                <div class="quote-decoration">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 15C20 20 15 25 10 25M40 15C40 20 45 25 50 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <blockquote class="quote-content" id="quote-container">
+                    <p class="quote-text" id="quote-texto">Carregando uma citação inspiradora...</p>
+                    <div class="quote-badge" id="quote-area"></div>
+                </blockquote>
+                <footer class="quote-author" id="quote-autor"></footer>
+            </div>
+            
+            <div class="quote-actions">
+                <button id="btn-buscar" class="btn-primary">
+                    <span class="btn-text">Nova Citação</span>
+                    <svg class="btn-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btnBuscar = document.getElementById('btn-buscar');
+        const quoteTexto = document.getElementById('quote-texto');
+        const quoteAutor = document.getElementById('quote-autor');
+        const quoteArea = document.getElementById('quote-area');
+        const quoteCard = document.getElementById('quote-card');
+        const selectArea = document.getElementById('filtro-area');
+        const selectAutor = document.getElementById('filtro-autor');
+
+        async function buscarCitacao() {
+            btnBuscar.disabled = true;
+            btnBuscar.querySelector('.btn-text').textContent = 'Carregando...';
+            btnBuscar.classList.add('loading');
+            
+            // Animação de fade out
+            quoteCard.style.opacity = '0.5';
+            quoteCard.style.transform = 'translateY(10px)';
+            
+            const autor = selectAutor.value;
+            const area = selectArea.value;
+
+            try {
+                const url = new URL('/citacao-do-dia', window.location.origin);
+                url.searchParams.append('autor', autor);
+                url.searchParams.append('area', area);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                // Pequeno delay para animação
+                await new Promise(resolve => setTimeout(resolve, 300));
+
+                if (data.erro) {
+                    quoteTexto.textContent = data.erro;
+                    quoteAutor.textContent = '';
+                    quoteArea.textContent = '';
+                    quoteArea.style.display = 'none';
+                    quoteCard.classList.add('error');
+                } else {
+                    quoteTexto.textContent = data.texto;
+                    quoteAutor.textContent = data.autor;
+                    quoteArea.textContent = data.area;
+                    quoteArea.style.display = 'inline-flex';
+                    quoteCard.classList.remove('error');
+                }
+            } catch (error) {
+                quoteTexto.textContent = 'Não foi possível conectar ao servidor. Tente novamente.';
+                quoteAutor.textContent = '';
+                quoteArea.style.display = 'none';
+                quoteCard.classList.add('error');
+            }
+            
+            // Animação de fade in
+            quoteCard.style.opacity = '1';
+            quoteCard.style.transform = 'translateY(0)';
+            
+            btnBuscar.disabled = false;
+            btnBuscar.querySelector('.btn-text').textContent = 'Nova Citação';
+            btnBuscar.classList.remove('loading');
+        }
+        
+        async function popularFiltros() {
+            try {
+                const response = await fetch('/filtros');
+                const data = await response.json();
+                
+                data.areas.forEach(area => {
+                    const option = new Option(area, area);
+                    selectArea.add(option);
+                });
+                
+                data.autores.forEach(autor => {
+                    const option = new Option(autor, autor);
+                    selectAutor.add(option);
+                });
+                
+            } catch (error) {
+                console.error("Erro ao carregar filtros:", error);
+            }
+        }
+
+        // Event listeners
+        btnBuscar.addEventListener('click', buscarCitacao);
+        selectArea.addEventListener('change', buscarCitacao);
+        selectAutor.addEventListener('change', buscarCitacao);
+        
+        // Inicialização
+        popularFiltros();
+        buscarCitacao();
+    </script>
+</body>
+</html>
+
