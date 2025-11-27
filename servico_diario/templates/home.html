@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoter - Inspiração Diária</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="home-page">
+    <div class="home-container">
+        <div class="home-content">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='Quoterlogo.png') }}" alt="Quoter" class="home-logo">
+            </div>
+            
+            <h1 class="home-title">
+                <span class="title-line">Encontre sua</span>
+                <span class="title-line highlight">Inspiração Diária</span>
+            </h1>
+            
+            <p class="home-subtitle">
+                Descubra citações inspiradoras de grandes pensadores, 
+                artistas e líderes. Filtre por autor ou área e encontre 
+                a mensagem perfeita para o seu momento.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>106+ Citações</h3>
+                    <p>Coleção cuidadosamente selecionada</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Filtros Inteligentes</h3>
+                    <p>Busque por autor ou área de conhecimento</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>Inspiração Diária</h3>
+                    <p>Uma nova perspectiva a cada busca</p>
+                </div>
+            </div>
+            
+            <a href="{{ url_for('citations') }}" class="cta-button">
+                <span>Explorar Citações</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+        </div>
+        
+        <div class="home-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+    </div>
+</body>
+</html>
+
